@@ -11,34 +11,40 @@ function App() {
     api.get('repositories').then(res =>{
       setRepositories(res.data)
     })
-  }, [repositories])
+  }, [])
 
 
-  async function handleAddRepository() {
-    api.post(`repositories`,{
-      "title": `React ${Date.now()}`,
-      "url": "https://github.com/Rocketseat/bootcamp-gostack-desafios/tree/master/desafio-conceitos-nodejs",
-      "techs": ["Node.js", "React"]
-    })
+  async function  handleAddRepository() {
+    const repository = await api.post(`repositories`, {
+      id: "123",
+      title: `React ${Date.now()}`,
+      url:
+        "https://github.com/Rocketseat/bootcamp-gostack-desafios/tree/master/desafio-conceitos-nodejs",
+      techs: ["Node.js", "React"],
+    });
+    setRepositories([...repositories, repository.data]);
   }
 
   async function handleRemoveRepository(id) {
-    console.log(id)
-    api.delete(`repositories/${id}`).then(res => {
-      console.log(res)
+    await api.delete(`repositories/${id}`).then(res => {
+      
+      setRepositories(
+        repositories.filter((repository) => repository.id !== id)
+      );
     })
-
   }
 
   return (
     <div>
       <ul data-testid="repository-list">
-         {repositories.map(repositori => 
-           <li key={repositori.id}> {repositori.title}
-             <button onClick={() => handleRemoveRepository(repositori.id)}>
-                Remover
-              </button>
-            </li>)} 
+        {repositories.map((repository) => (
+          <li key={repository.id}>
+                  {repository.title}
+            <button onClick={() => handleRemoveRepository(repository.id)}>
+              Remover
+            </button>
+          </li>
+        ))}
       </ul>
 
       <button onClick={handleAddRepository}>Adicionar</button>
